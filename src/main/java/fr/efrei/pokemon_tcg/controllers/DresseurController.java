@@ -63,10 +63,11 @@ public class DresseurController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-
-	@PatchMapping("/gacha")
-	public ResponseEntity<List<Pokemon>> gacha(@RequestParam(required = false) TypePokemon type) {
-		List<Pokemon> pokemons = pokemonService.findAll(type);
+	@PatchMapping("/{uuid}/gacha")
+	public ResponseEntity<List<Pokemon>> gacha(
+			@PathVariable String uuid, // Récupère l'UUID du dresseur
+			@RequestParam(required = false) TypePokemon type) { // Récupère le type de Pokémon si spécifié
+		List<Pokemon> pokemons = pokemonService.findAll(type); // Récupère la liste des Pokémon, filtrée si type est fourni
 
 		// Vérifier qu'il y a au moins 5 Pokémon
 		if (pokemons.size() < 5) {
@@ -85,11 +86,14 @@ public class DresseurController {
 			// Vérifier si le Pokémon est déjà sélectionné
 			if (!randomPokemons.contains(randomPokemon)) {
 				randomPokemons.add(randomPokemon);
+
+				// Capturer le Pokémon (passer l'UUID du Pokémon au service)
+				CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
+				dresseurService.capturerPokemon(uuid, capturePokemon);
 			}
 		}
 
 		return new ResponseEntity<>(randomPokemons, HttpStatus.OK);
 	}
-
 
 }

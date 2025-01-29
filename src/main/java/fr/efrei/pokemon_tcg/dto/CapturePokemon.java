@@ -1,14 +1,20 @@
 package fr.efrei.pokemon_tcg.dto;
 
-import fr.efrei.pokemon_tcg.constants.TypePokemon;
-import jakarta.validation.constraints.Positive;
-import org.hibernate.validator.constraints.Length;
-
 public class CapturePokemon {
 
 	private String uuid;
 
+	// Constructeur avec UUID
+	public CapturePokemon(String uuid) {
+		this.uuid = uuid;
+	}
+
+	// Getter et Setter
 	public String getUuid() {
 		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 }
