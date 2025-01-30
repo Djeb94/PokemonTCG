@@ -32,8 +32,7 @@ public class PokemonServiceImpl implements IPokemonService {
 		pokemonACreer.setType(pokemon.getType());
 		pokemonACreer.setNom(pokemon.getNom());
 		pokemonACreer.setPv(pokemon.getPv());
-		pokemonACreer.setAttaque1(pokemon.getAttaque1());
-		pokemonACreer.setAttaque2(pokemon.getAttaque2());
+		pokemonACreer.setAttaques(pokemon.getAttaques());
 
 		repository.save(pokemonACreer);
 	}
@@ -52,8 +51,7 @@ public class PokemonServiceImpl implements IPokemonService {
 		}
 		pokemonAModifier.setNom(pokemon.getNom());
 		pokemonAModifier.setPv(pokemon.getPv());
-		pokemonAModifier.setAttaque1(pokemon.getAttaque1());
-		pokemonAModifier.setAttaque2(pokemon.getAttaque2());
+		pokemonAModifier.setAttaques(pokemon.getAttaques());
 		pokemonAModifier.setType(pokemon.getType());
 
 		repository.save(pokemonAModifier);

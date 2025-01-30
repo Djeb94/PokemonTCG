@@ -2,6 +2,8 @@ package fr.efrei.pokemon_tcg.models;
 
 import fr.efrei.pokemon_tcg.constants.TypePokemon;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Random;
 
 @Entity
@@ -15,9 +17,10 @@ public class Pokemon {
 
 	private Integer pv;
 
-	private Integer attaque1;
+	@ElementCollection
+	@CollectionTable(name = "pokemon_attaques", joinColumns = @JoinColumn(name = "pokemon_id"))
+	private List<Attaque> attaques;
 
-	private Integer attaque2;
 
 	@Enumerated(EnumType.STRING)
 	private TypePokemon type;
@@ -65,21 +68,7 @@ public class Pokemon {
 		this.pv = pv;
 	}
 
-	public Integer getAttaque1() {
-		return attaque1;
-	}
 
-	public void setAttaque1(Integer attaque1) {
-		this.attaque1 = attaque1;
-	}
-
-	public Integer getAttaque2() {
-		return attaque2;
-	}
-
-	public void setAttaque2(Integer attaque2) {
-		this.attaque2 = attaque2;
-	}
 
 	public TypePokemon getType() {
 		return type;
@@ -100,4 +89,10 @@ public class Pokemon {
 	public void setRarete(Integer rarete) {
 		this.rarete = rarete;
 	}
+
+	public List<Attaque> getAttaques() { return attaques; }
+
+	public void setAttaques(List<Attaque> attaques) { this.attaques = attaques; }
 }
+
+

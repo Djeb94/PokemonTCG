@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -67,29 +68,55 @@ public class DresseurController {
 	public ResponseEntity<List<Pokemon>> gacha(
 			@PathVariable String uuid, // Récupère l'UUID du dresseur
 			@RequestParam(required = false) TypePokemon type) { // Récupère le type de Pokémon si spécifié
-		List<Pokemon> pokemons = pokemonService.findAll(type); // Récupère la liste des Pokémon, filtrée si type est fourni
 
-		// Vérifier qu'il y a au moins 5 Pokémon
-		if (pokemons.size() < 5) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Retourner une erreur si pas assez de Pokémon
+		// Récupérer le dresseur par UUID
+		Dresseur dresseur = dresseurService.findById(uuid); // Ou dresseurRepository.findById(uuid)
+
+		// Vérifier si le dresseur peut faire un gacha (s'il a fait un gacha avant hier)
+		if (dresseur.getDateDernierGacha() == null || dresseur.getDateDernierGacha().isBefore(LocalDateTime.now().minusDays(1))) {
+
+			// Récupère la liste des Pokémon disponibles pour le gacha
+			List<Pokemon> pokemons = pokemonService.findAll(type);
+
+			// Vérifier qu'il y a au moins 5 Pokémon
+			if (pokemons.size() < 5) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Retourner une erreur si pas assez de Pokémon
+			}
+
+			// Sélectionner 5 Pokémon au hasard
+			List<Pokemon> randomPokemons = new ArrayList<>();
+			Random rand = new Random();
+
+			for (int i = 0; i < 5; i++) {
+				int randomIndex = rand.nextInt(pokemons.size());
+				Pokemon randomPokemon = pokemons.get(randomIndex);
+				randomPokemons.add(randomPokemon);
+
+				// Capturer le Pokémon (passer l'UUID du Pokémon au service)
+				CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
+				dresseurService.capturerPokemon(uuid, capturePokemon);
+			}
+
+			// Mise à jour du dernier gacha
+			DresseurDTO dresseurDTO = new DresseurDTO();
+			dresseurDTO.setNom(dresseur.getNom()); // On garde le nom actuel
+			dresseurDTO.setPrenom(dresseur.getPrenom()); // On garde le prénom actuel
+
+			// Met à jour la date du dernier gacha
+			dresseur.setDateDernierGacha(LocalDateTime.now());
+
+			// Appel à la méthode update() pour sauvegarder la date du dernier gacha
+			boolean isModifier = dresseurService.update(uuid, dresseurDTO);
+
+			if (!isModifier) {
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+			return new ResponseEntity<>(randomPokemons, HttpStatus.OK);
+		} else {
+			// Le dresseur a déjà effectué un gacha récemment (hier ou aujourd'hui)
+			return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
 		}
-
-		// Sélectionner 5 Pokémon au hasard (avec remise)
-		List<Pokemon> randomPokemons = new ArrayList<>();
-		Random rand = new Random();
-
-		for (int i = 0; i < 5; i++) { // Tirer 5 Pokémon, même si déjà sélectionné avant
-			int randomIndex = rand.nextInt(pokemons.size());
-			Pokemon randomPokemon = pokemons.get(randomIndex);
-			randomPokemons.add(randomPokemon);
-
-			// Capturer le Pokémon (passer l'UUID du Pokémon au service)
-			CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
-			dresseurService.capturerPokemon(uuid, capturePokemon);
-		}
-
-		return new ResponseEntity<>(randomPokemons, HttpStatus.OK);
 	}
-
 
 }
