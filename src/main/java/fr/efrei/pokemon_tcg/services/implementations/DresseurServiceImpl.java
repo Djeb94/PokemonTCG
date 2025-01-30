@@ -33,11 +33,11 @@ public class DresseurServiceImpl implements IDresseurService {
 	}
 
 	public void capturerPokemon(String uuid, CapturePokemon capturePokemon) {
-		Dresseur dresseur = findById(uuid);
-		Pokemon pokemon = pokemonService.findById(capturePokemon.getUuid());
-		dresseur.getPokemonList().add(pokemon);
-		repository.save(dresseur);
-	}
+        Dresseur dresseur = findById(uuid);
+        Pokemon pokemon = pokemonService.findById(capturePokemon.getUuid());
+        dresseur.getDeckGlobal().add(pokemon);
+        repository.save(dresseur);
+    }
 
 	@Override
 	public void create(DresseurDTO dresseurDTO) {
