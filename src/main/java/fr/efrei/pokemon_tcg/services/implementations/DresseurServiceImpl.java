@@ -15,49 +15,68 @@ import java.util.List;
 @Service
 public class DresseurServiceImpl implements IDresseurService {
 
-	private final DresseurRepository repository;
-	private final IPokemonService pokemonService;
-	public DresseurServiceImpl(DresseurRepository repository, PokemonServiceImpl pokemonService) {
-		this.repository = repository;
-		this.pokemonService = pokemonService;
-	}
+    private final DresseurRepository repository;
+    private final IPokemonService pokemonService;
+    public DresseurServiceImpl(DresseurRepository repository, PokemonServiceImpl pokemonService) {
+        this.repository = repository;
+        this.pokemonService = pokemonService;
+    }
 
-	@Override
-	public List<Dresseur> findAll() {
-		return repository.findAllByDeletedAtNull();
-	}
+    @Override
+    public List<Dresseur> findAll() {
+        return repository.findAllByDeletedAtNull();
+    }
 
-	@Override
-	public Dresseur findById(String uuid) {
-		return repository.findById(uuid).orElse(null);
-	}
+    @Override
+    public Dresseur findById(String uuid) {
+        return repository.findById(uuid).orElse(null);
+    }
 
-	public void capturerPokemon(String uuid, CapturePokemon capturePokemon) {
+    public void capturerPokemon(String uuid, CapturePokemon capturePokemon) {
         Dresseur dresseur = findById(uuid);
         Pokemon pokemon = pokemonService.findById(capturePokemon.getUuid());
-        dresseur.getDeckGlobal().add(pokemon);
+        dresseur.getPokemonList().add(pokemon);
         repository.save(dresseur);
     }
 
-	@Override
-	public void create(DresseurDTO dresseurDTO) {
-		Dresseur dresseur = new Dresseur();
-		dresseur.setNom(dresseurDTO.getNom());
-		dresseur.setPrenom(dresseurDTO.getPrenom());
-		dresseur.setDeletedAt(null);
-		repository.save(dresseur);
-	}
+    @Override
+    public void create(DresseurDTO dresseurDTO) {
+        Dresseur dresseur = new Dresseur();
+        dresseur.setNom(dresseurDTO.getNom());
+        dresseur.setPrenom(dresseurDTO.getPrenom());
+        dresseur.setDeletedAt(null);
+        dresseur.setDateDernierGacha(null);
 
-	@Override
-	public boolean update(String uuid, DresseurDTO dresseurDTO) {
-		return false;
-	}
+        repository.save(dresseur);
+    }
+@Override
+    public boolean update(String uuid, DresseurDTO dresseurDTO) {
+        // Récupérer le dresseur existant par son UUID
+        Dresseur dresseurAModifier = findById(uuid); // Trouver le dresseur dans la base de données (ou ton repository)
 
-	@Override
-	public boolean delete(String uuid) {
-		Dresseur dresseur = findById(uuid);
-		dresseur.setDeletedAt(LocalDateTime.now());
-		repository.save(dresseur);
-		return true;
-	}
+        // Vérifier si le dresseur existe
+        if (dresseurAModifier == null) {
+            return false; // Si le dresseur n'existe pas, retourner false
+        }
+
+        // Mettre à jour les propriétés du dresseur avec les informations provenant du DTO
+        dresseurAModifier.setNom(dresseurDTO.getNom());
+        dresseurAModifier.setPrenom(dresseurDTO.getPrenom());
+
+        // Mettre à jour la date du dernier gacha (ici, tu peux la mettre à la date actuelle)
+        dresseurAModifier.setDateDernierGacha(LocalDateTime.now());
+
+        // Sauvegarder le dresseur modifié dans la base de données
+        repository.save(dresseurAModifier);
+
+        return true; // Retourner true si la mise à jour a réussi
+    }
+
+    @Override
+    public boolean delete(String uuid) {
+        Dresseur dresseur = findById(uuid);
+        dresseur.setDeletedAt(LocalDateTime.now());
+        repository.save(dresseur);
+        return true;
+    }
 }
