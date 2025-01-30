@@ -74,26 +74,22 @@ public class DresseurController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Retourner une erreur si pas assez de Pokémon
 		}
 
-		// Sélectionner 5 Pokémon au hasard
+		// Sélectionner 5 Pokémon au hasard (avec remise)
 		List<Pokemon> randomPokemons = new ArrayList<>();
 		Random rand = new Random();
 
-		// Assurer qu'on n'ajoute pas un Pokémon déjà sélectionné
-		while (randomPokemons.size() < 5) {
+		for (int i = 0; i < 5; i++) { // Tirer 5 Pokémon, même si déjà sélectionné avant
 			int randomIndex = rand.nextInt(pokemons.size());
 			Pokemon randomPokemon = pokemons.get(randomIndex);
+			randomPokemons.add(randomPokemon);
 
-			// Vérifier si le Pokémon est déjà sélectionné
-			if (!randomPokemons.contains(randomPokemon)) {
-				randomPokemons.add(randomPokemon);
-
-				// Capturer le Pokémon (passer l'UUID du Pokémon au service)
-				CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
-				dresseurService.capturerPokemon(uuid, capturePokemon);
-			}
+			// Capturer le Pokémon (passer l'UUID du Pokémon au service)
+			CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
+			dresseurService.capturerPokemon(uuid, capturePokemon);
 		}
 
 		return new ResponseEntity<>(randomPokemons, HttpStatus.OK);
 	}
+
 
 }

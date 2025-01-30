@@ -12,7 +12,12 @@ public class Pokemon {
 
 	private String nom;
 
-	private Integer niveau;
+	private Integer pv;
+
+	private Integer attaque1;
+
+	private Integer attaque2;
+
 
 	@Enumerated(EnumType.STRING)
 	private TypePokemon type;
@@ -25,13 +30,34 @@ public class Pokemon {
 		this.nom = nom;
 	}
 
-	public Integer getNiveau() {
-		return niveau;
+
+
+	public Integer getPv() {
+		return pv;
 	}
 
-	public void setNiveau(Integer niveau) {
-		this.niveau = niveau;
+	public void setPv(Integer pv) {
+		this.pv = pv;
 	}
+
+
+	public Integer getAttaque1() {
+		return attaque1;
+	}
+
+	public void setAttaque1(Integer attaque1) {
+		this.attaque1 = attaque1;
+	}
+
+
+
+	public Integer getAttaque2() {
+		return attaque2;
+	}
+
+	public void setAttaque2(Integer attaque2) { this.attaque2 = attaque2; }
+
+
 
 	public TypePokemon getType() {
 		return type;
@@ -40,6 +66,8 @@ public class Pokemon {
 	public void setType(TypePokemon type) {
 		this.type = type;
 	}
+
+
 
 	public String getUuid() {
 		return uuid;
