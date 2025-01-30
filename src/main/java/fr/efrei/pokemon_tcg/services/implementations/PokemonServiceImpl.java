@@ -55,6 +55,7 @@ public class PokemonServiceImpl implements IPokemonService {
 		pokemonAModifier.setAttaque1(pokemon.getAttaque1());
 		pokemonAModifier.setAttaque2(pokemon.getAttaque2());
 		pokemonAModifier.setType(pokemon.getType());
+
 		repository.save(pokemonAModifier);
 		return true;
 	}

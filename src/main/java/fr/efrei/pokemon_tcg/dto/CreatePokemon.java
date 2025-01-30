@@ -18,6 +18,9 @@ public class CreatePokemon {
 	@Positive
 	private Integer attaque2;
 
+	@Positive
+	private Integer rarete;
+
 	private TypePokemon type;
 
 	public String getNom() {
@@ -36,6 +39,10 @@ public class CreatePokemon {
 
 	public Integer getAttaque2() {
 		return attaque2;
+	}
+
+	public Integer getRarete() {
+		return rarete;
 	}
 
 	public TypePokemon getType() {
