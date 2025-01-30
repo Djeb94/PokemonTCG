@@ -18,7 +18,7 @@ public class Dresseur {
 
 	private LocalDateTime deletedAt;
 
-	@OneToMany
+	@ManyToMany
 	List<Pokemon> pokemonList;
 
 	public String getUuid() {
