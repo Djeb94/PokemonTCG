@@ -2,11 +2,13 @@ package fr.efrei.pokemon_tcg.services.implementations;
 
 import fr.efrei.pokemon_tcg.dto.CapturePokemon;
 import fr.efrei.pokemon_tcg.dto.DresseurDTO;
+import fr.efrei.pokemon_tcg.dto.EchangeDTO;
 import fr.efrei.pokemon_tcg.models.Dresseur;
 import fr.efrei.pokemon_tcg.models.Pokemon;
 import fr.efrei.pokemon_tcg.repositories.DresseurRepository;
 import fr.efrei.pokemon_tcg.services.IDresseurService;
 import fr.efrei.pokemon_tcg.services.IPokemonService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,7 +37,7 @@ public class DresseurServiceImpl implements IDresseurService {
     public void capturerPokemon(String uuid, CapturePokemon capturePokemon) {
         Dresseur dresseur = findById(uuid);
         Pokemon pokemon = pokemonService.findById(capturePokemon.getUuid());
-        dresseur.getPokemonList().add(pokemon);
+        dresseur.getDeckGlobal().add(pokemon);
         repository.save(dresseur);
     }
 
@@ -79,4 +81,45 @@ public class DresseurServiceImpl implements IDresseurService {
         repository.save(dresseur);
         return true;
     }
+
+    @Override
+    @Transactional
+    public boolean echangerPokemon(String dresseurUuid, EchangeDTO echangeDTO) {
+        // Trouver les dresseurs
+        Dresseur dresseur1 = repository.findById(dresseurUuid).orElse(null);
+        Dresseur dresseur2 = repository.findById(echangeDTO.getAutreDresseurUuid()).orElse(null);
+
+        if (dresseur1 == null || dresseur2 == null) {
+            return false; // Un des dresseurs n'existe pas
+        }
+
+        // Trouver les Pokémon
+        Pokemon pokemon1 = findPokemonByUuid(dresseur1, echangeDTO.getPokemonUuid());
+        Pokemon pokemon2 = findPokemonByUuid(dresseur2, echangeDTO.getAutrePokemonUuid());
+
+        if (pokemon1 == null || pokemon2 == null) {
+            return false; // Un des Pokémon n'existe pas
+        }
+
+        // Effectuer l'échange
+        dresseur1.getDeckGlobal().remove(pokemon1);
+        dresseur2.getDeckGlobal().remove(pokemon2);
+
+        dresseur1.getDeckGlobal().add(pokemon2);
+        dresseur2.getDeckGlobal().add(pokemon1);
+
+        // Sauvegarder les modifications
+        repository.save(dresseur1);
+        repository.save(dresseur2);
+
+        return true;
+    }
+
+    private Pokemon findPokemonByUuid(Dresseur dresseur, String pokemonUuid) {
+        return dresseur.getDeckGlobal().stream()
+                .filter(p -> p.getUuid().equals(pokemonUuid))
+                .findFirst()
+                .orElse(null);
+    }
+
 }

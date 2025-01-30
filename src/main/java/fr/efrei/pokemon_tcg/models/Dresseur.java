@@ -22,7 +22,10 @@ public class Dresseur {
 
 
     @ManyToMany
-    List<Pokemon> pokemonList;
+    private List<Pokemon> deckCombat;
+
+    @ManyToMany
+    private List<Pokemon> deckGlobal;
 
     public String getUuid() {
         return uuid;
@@ -57,8 +60,19 @@ public class Dresseur {
         this.deletedAt = deletedAt;
     }
 
-    public List<Pokemon> getPokemonList() {
-        return pokemonList;
+    public List<Pokemon> getDeckCombat() {
+        return deckCombat;
+    }
+    public void setDeckCombat(List<Pokemon> deckCombat) {
+        this.deckCombat = deckCombat;
+    }
+
+    public List<Pokemon> getDeckGlobal() {
+        return deckGlobal;
+    }
+
+    public void setDeckGlobal(List<Pokemon> deckGlobal) {
+        this.deckGlobal = deckGlobal;
     }
 
 
@@ -71,7 +85,4 @@ public class Dresseur {
     }
 
 
-    public void setPokemonList(List<Pokemon> pokemonList) {
-        this.pokemonList = pokemonList;
-    }
 }

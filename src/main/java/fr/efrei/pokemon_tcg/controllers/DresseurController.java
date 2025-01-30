@@ -3,6 +3,7 @@ package fr.efrei.pokemon_tcg.controllers;
 import fr.efrei.pokemon_tcg.constants.TypePokemon;
 import fr.efrei.pokemon_tcg.dto.CapturePokemon;
 import fr.efrei.pokemon_tcg.dto.DresseurDTO;
+import fr.efrei.pokemon_tcg.dto.EchangeDTO;
 import fr.efrei.pokemon_tcg.models.Dresseur;
 import fr.efrei.pokemon_tcg.models.Pokemon;
 import fr.efrei.pokemon_tcg.services.IDresseurService;
@@ -117,6 +118,21 @@ public class DresseurController {
 			// Le dresseur a déjà effectué un gacha récemment (hier ou aujourd'hui)
 			return new ResponseEntity<>( HttpStatus.BAD_REQUEST);
 		}
+	}
+
+
+	@PatchMapping("/{uuid}/echange")
+	public ResponseEntity<?> echangerPokemon(
+			@PathVariable String uuid,
+			@RequestBody EchangeDTO echangeDTO) {
+
+		boolean echangeReussi = dresseurService.echangerPokemon(uuid, echangeDTO);
+
+		if (!echangeReussi) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

@@ -53,7 +53,7 @@ public class PokemonController {
 	}
 
 	@DeleteMapping("/{uuid}")
-	public ResponseEntity<?> updatePokemon(@PathVariable String uuid) {
+	public ResponseEntity<?> deletePokemon(@PathVariable String uuid) {
 		boolean isSupprimer = pokemonService.delete(uuid);
 		if(!isSupprimer) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
