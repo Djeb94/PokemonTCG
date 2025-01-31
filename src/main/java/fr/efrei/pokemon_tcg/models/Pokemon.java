@@ -25,34 +25,31 @@ public class Pokemon {
 	@Enumerated(EnumType.STRING)
 	private TypePokemon type;
 
-	// Ajout de la variable rareté
 	private Integer rarete;
 
 
-	// Constructeur pour générer la rareté lors de l'instanciation
 	public Pokemon() {
 		this.rarete = genererRarete();
 	}
 
 	private Integer genererRarete() {
 		Random random = new Random();
-		int randomValue = random.nextInt(100); // Génère un nombre entre 0 et 99
+		int randomValue = random.nextInt(100);
 
 		if (randomValue < 50) {
-			return 1; // 50% de chance pour la rareté 1
+			return 1;
 		} else if (randomValue < 80) {
-			return 2; // 30% de chance pour la rareté 2
+			return 2;
 		} else if (randomValue < 95) {
-			return 3; // 15% de chance pour la rareté 3
+			return 3;
 		} else if (randomValue < 99) {
-			return 4; // 4% de chance pour la rareté 4
+			return 4;
 		} else {
-			return 5; // 1% de chance pour la rareté 5
+			return 5;
 		}
 	}
 
 
-	// Getters et Setters
 	public String getNom() {
 		return nom;
 	}

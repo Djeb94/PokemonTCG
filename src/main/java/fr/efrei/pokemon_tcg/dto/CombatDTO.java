@@ -7,7 +7,6 @@ public class CombatDTO {
     private String dresseur2Uuid;
     private String etat;
 
-    // Getters and Setters
     public String getUuid() {
         return uuid;
     }

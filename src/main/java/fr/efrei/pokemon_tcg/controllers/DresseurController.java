@@ -69,28 +69,22 @@ public class DresseurController {
 
 	@PatchMapping("/{uuid}/gacha")
 	public ResponseEntity<List<Pokemon>> gacha(
-			@PathVariable String uuid, // Récupère l'UUID du dresseur
-			@RequestParam(required = false) TypePokemon type) { // Récupère le type de Pokémon si spécifié
+			@PathVariable String uuid,
+			@RequestParam(required = false) TypePokemon type) {
 
-		// Récupérer le dresseur par UUID
 		Dresseur dresseur = dresseurService.findById(uuid);
 
-		// Vérifier si le dresseur peut faire un gacha (s'il a fait un gacha avant hier)
 		if (dresseur.getDateDernierGacha() == null || dresseur.getDateDernierGacha().isBefore(LocalDateTime.now().minusDays(1))) {
 
-			// Récupère la liste des Pokémon disponibles pour le gacha
 			List<Pokemon> pokemons = pokemonService.findAll(type);
 
-			// Vérifier qu'il y a au moins 5 Pokémon
 			if (pokemons.size() < 5) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Retourner une erreur si pas assez de Pokémon
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
-			// Mélanger la liste pour obtenir 5 Pokémon uniques
 			Collections.shuffle(pokemons);
 			List<Pokemon> randomPokemons = pokemons.subList(0, 5);
 
-			// Capturer les Pokémon sélectionnés
 			for (Pokemon randomPokemon : randomPokemons) {
 				CapturePokemon capturePokemon = new CapturePokemon(randomPokemon.getUuid());
 				dresseurService.capturerPokemon(uuid, capturePokemon);
@@ -101,10 +95,8 @@ public class DresseurController {
 			dresseurDTO.setNom(dresseur.getNom());
 			dresseurDTO.setPrenom(dresseur.getPrenom());
 
-			// Met à jour la date du dernier gacha
 			dresseur.setDateDernierGacha(LocalDateTime.now());
 
-			// Sauvegarde des modifications
 			boolean isModifier = dresseurService.update(uuid, dresseurDTO);
 
 			if (!isModifier) {
@@ -113,7 +105,6 @@ public class DresseurController {
 
 			return new ResponseEntity<>(randomPokemons, HttpStatus.OK);
 		} else {
-			// Le dresseur a déjà effectué un gacha récemment (hier ou aujourd'hui)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -125,7 +116,7 @@ public class DresseurController {
 			@PathVariable String uuid,
 			@RequestBody EchangeDTO echangeDTO) {
 
-		Dresseur dresseur = dresseurService.findById(uuid); // Ou dresseurRepository.findById(uuid)
+		Dresseur dresseur = dresseurService.findById(uuid);
 
 		// Vérifier si le dresseur peut échanger
 		if (dresseur.getDateDernierEchange() == null || dresseur.getDateDernierEchange().isBefore(LocalDateTime.now().minusDays(1))) {
@@ -133,10 +124,9 @@ public class DresseurController {
 			boolean echangeReussi = dresseurService.echangerPokemon(uuid, echangeDTO);
 
 			if (!echangeReussi) {
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Si l'échange échoue
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
-			// Si l'échange réussit, mettre à jour la date du dernier échange du dresseur
 			dresseur.setDateDernierEchange(LocalDateTime.now());
 			DresseurDTO dresseurDTO = new DresseurDTO();
 			dresseurDTO.setNom(dresseur.getNom());
@@ -146,50 +136,41 @@ public class DresseurController {
 			boolean isModifier = dresseurService.update(uuid, dresseurDTO);
 
 			if (!isModifier) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // Si la mise à jour échoue
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 
-			return new ResponseEntity<>(HttpStatus.OK); // Réponse si l'échange et la mise à jour sont réussis
+			return new ResponseEntity<>(HttpStatus.OK);
 
 		} else {
-			// Le dresseur a déjà effectué un échange récemment (hier ou aujourd'hui)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@PatchMapping("/{uuid}/deck")
 	public ResponseEntity<List<Pokemon>> deck(
-			@PathVariable String uuid, // Récupère l'UUID du dresseur
-			@RequestBody List<String> pokemonUuids) { // Liste d'UUID de Pokémon à transférer
+			@PathVariable String uuid,
+			@RequestBody List<String> pokemonUuids) {
 
-		// Récupérer le dresseur par UUID
 		Dresseur dresseur = dresseurService.findById(uuid);
 		if (dresseur == null) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Si dresseur introuvable
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 
-		// Vérifier que la liste contient des UUID de Pokémon
 		if (pokemonUuids.isEmpty()) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Si la liste est vide
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		// Liste pour stocker les Pokémon transférés
 		List<Pokemon> pokemonsADeplacer = new ArrayList<>();
 
-		// Ajouter les Pokémon au deckCombat
 		for (String pokemonUuid : pokemonUuids) {
-			// Récupérer le Pokémon par son UUID
 			PokemonDeck transferePokemon = new PokemonDeck(pokemonUuid);
 
-			// Appeler la méthode creerDeck pour transférer le Pokémon
 			dresseurService.creerDeck(uuid, transferePokemon);
 
-			// Ajouter à la liste des Pokémon transférés
 			Pokemon pokemon = pokemonService.findById(pokemonUuid);
 			pokemonsADeplacer.add(pokemon);
 		}
 
-		// Retourner les Pokémon transférés
 		return new ResponseEntity<>(pokemonsADeplacer, HttpStatus.OK);
 	}
 

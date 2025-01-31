@@ -13,12 +13,11 @@ public class Combat {
     private String uuid;
     private String dresseur1Uuid;
     private String dresseur2Uuid;
-    private String etat; // par exemple "en_attente", "en_cours", "termine"
+    private String etat;
     private LocalDateTime debutCombat;
 
 
 
-    // Getters and Setters
     public String getUuid() {
         return uuid;
     }

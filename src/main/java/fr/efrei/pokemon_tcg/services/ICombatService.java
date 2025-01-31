@@ -18,7 +18,5 @@ public interface ICombatService {
 
     Combat create(CombatDTO combatDTO);
 
-    //Combat executerAttaque(Combat combat, Dresseur dresseur, Pokemon attaquant, Pokemon cible, Attaque attaque);
-
 
 }

@@ -7,7 +7,6 @@ public class AttaqueRequest {
     private String pokemonCibleUuid;
     private String nomAttaque;
 
-    // Getters et Setters
     public String getCombatUuid() { return combatUuid; }
     public void setCombatUuid(String combatUuid) { this.combatUuid = combatUuid; }
 

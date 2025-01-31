@@ -37,7 +37,6 @@ public class CombatServiceImpl implements ICombatService {
     @Override
     public Combat create(CombatDTO combatDTO) {
         Combat combat = new Combat();
-        // Mapper les données de combatDTO vers combat
         combat.setDresseur1Uuid(combatDTO.getDresseur1Uuid());
         combat.setDresseur2Uuid(combatDTO.getDresseur2Uuid());
         combat.setEtat(combatDTO.getEtat());
@@ -46,5 +45,4 @@ public class CombatServiceImpl implements ICombatService {
         return repository.save(combat);
     }
 
-    //public Combat executerAttaque(Combat combat, Dresseur dresseur, Pokemon attaquant, Pokemon cible, Attaque attaque) {}
 }

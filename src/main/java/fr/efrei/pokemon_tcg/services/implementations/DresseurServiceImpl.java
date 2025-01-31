@@ -75,25 +75,19 @@ public class DresseurServiceImpl implements IDresseurService {
     }
 @Override
     public boolean update(String uuid, DresseurDTO dresseurDTO) {
-        // Récupérer le dresseur existant par son UUID
-        Dresseur dresseurAModifier = findById(uuid); // Trouver le dresseur dans la base de données (ou ton repository)
+        Dresseur dresseurAModifier = findById(uuid);
 
-        // Vérifier si le dresseur existe
         if (dresseurAModifier == null) {
-            return false; // Si le dresseur n'existe pas, retourner false
+            return false;
         }
 
-        // Mettre à jour les propriétés du dresseur avec les informations provenant du DTO
         dresseurAModifier.setNom(dresseurDTO.getNom());
         dresseurAModifier.setPrenom(dresseurDTO.getPrenom());
 
-        // Mettre à jour la date du dernier gacha (ici, tu peux la mettre à la date actuelle)
 
-
-        // Sauvegarder le dresseur modifié dans la base de données
         repository.save(dresseurAModifier);
 
-        return true; // Retourner true si la mise à jour a réussi
+        return true;
     }
 
     @Override
@@ -107,30 +101,26 @@ public class DresseurServiceImpl implements IDresseurService {
     @Override
     @Transactional
     public boolean echangerPokemon(String dresseurUuid, EchangeDTO echangeDTO) {
-        // Trouver les dresseurs
         Dresseur dresseur1 = repository.findById(dresseurUuid).orElse(null);
         Dresseur dresseur2 = repository.findById(echangeDTO.getAutreDresseurUuid()).orElse(null);
 
         if (dresseur1 == null || dresseur2 == null) {
-            return false; // Un des dresseurs n'existe pas
+            return false;
         }
 
-        // Trouver les Pokémon
         Pokemon pokemon1 = findPokemonByUuid(dresseur1, echangeDTO.getPokemonUuid());
         Pokemon pokemon2 = findPokemonByUuid(dresseur2, echangeDTO.getAutrePokemonUuid());
 
         if (pokemon1 == null || pokemon2 == null) {
-            return false; // Un des Pokémon n'existe pas
+            return false;
         }
 
-        // Effectuer l'échange
         dresseur1.getDeckGlobal().remove(pokemon1);
         dresseur2.getDeckGlobal().remove(pokemon2);
 
         dresseur1.getDeckCombat().add(pokemon2);
         dresseur2.getDeckCombat().add(pokemon1);
 
-        // Sauvegarder les modifications
         repository.save(dresseur1);
         repository.save(dresseur2);
 

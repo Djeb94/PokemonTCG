@@ -5,7 +5,6 @@ public class EchangeDTO {
     private String autreDresseurUuid;
     private String autrePokemonUuid;
 
-    // Getters et Setters
     public String getPokemonUuid() { return pokemonUuid; }
     public void setPokemonUuid(String pokemonUuid) { this.pokemonUuid = pokemonUuid; }
 

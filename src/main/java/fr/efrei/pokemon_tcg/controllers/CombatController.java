@@ -43,7 +43,7 @@ public class CombatController {
 
 
         if (dresseur1 == null || dresseur2 == null || dresseur1.equals(dresseur2) || dresseur1.getDeckCombat().size() == 4 || dresseur2.getDeckCombat().size() == 4 ) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Si l'échange échoue
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         }
 
@@ -78,7 +78,6 @@ public class CombatController {
             @PathVariable String uuid2,
             @RequestBody CombatDTO combatDTO,
             @RequestBody AttaqueRequest request) {
-        // Récupération des informations depuis la requête
         Combat combat = combatService.findById(request.getCombatUuid());
         Dresseur dresseur = dresseurService.findById(request.getDresseurUuid());
 
@@ -86,7 +85,6 @@ public class CombatController {
             return new ResponseEntity<>("Combat ou dresseur introuvable", HttpStatus.NOT_FOUND);
         }
 
-        // Recherche du Pokémon attaquant dans le deck du dresseur
         Pokemon attaquant = dresseur.getDeckCombat().stream()
                 .filter(p -> p.getUuid().equals(request.getPokemonAttaquantUuid()))
                 .findFirst()
@@ -96,7 +94,6 @@ public class CombatController {
             return new ResponseEntity<>("Pokémon attaquant introuvable dans le deck du dresseur", HttpStatus.BAD_REQUEST);
         }
 
-        // Recherche de l'attaque dans la liste des attaques du Pokémon attaquant
         Attaque attaque = attaquant.getAttaques().stream()
                 .filter(a -> a.getNom().equalsIgnoreCase(request.getNomAttaque()))
                 .findFirst()
@@ -106,7 +103,6 @@ public class CombatController {
             return new ResponseEntity<>("Attaque introuvable pour ce Pokémon", HttpStatus.BAD_REQUEST);
         }
 
-        // Recherche du Pokémon ciblé dans l'autre deck du combat
         Dresseur adversaire = combat.getDresseur1Uuid().equals(dresseur.getUuid()) ?
                 dresseurService.findById(combat.getDresseur2Uuid()) :
                 dresseurService.findById(combat.getDresseur1Uuid());
@@ -119,9 +115,6 @@ public class CombatController {
         if (cible == null) {
             return new ResponseEntity<>("Pokémon cible introuvable dans le deck adverse", HttpStatus.BAD_REQUEST);
         }
-
-        // Exécution de l'attaque
-        //combatService.executerAttaque(combat, dresseur, attaquant, cible, attaque);
 
         return ResponseEntity.ok("Attaque exécutée avec succès !");
     }
