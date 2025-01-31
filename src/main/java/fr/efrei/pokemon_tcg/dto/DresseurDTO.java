@@ -9,6 +9,9 @@ public class DresseurDTO {
 
     private LocalDateTime dateDernierGacha;
 
+    private LocalDateTime dateDernierEchange;
+
+
     public String getNom() {
         return nom;
     }
@@ -18,6 +21,9 @@ public class DresseurDTO {
     }
 
     public LocalDateTime getDateDernierGacha() { return dateDernierGacha; }
+
+    public LocalDateTime getDateDernierEchange() { return dateDernierEchange; }
+
 
     public void setNom(String nom) {
         this.nom = nom;
@@ -30,4 +36,9 @@ public class DresseurDTO {
     public void setDateDernierGacha(LocalDateTime dateDernierGacha) {
         this.dateDernierGacha = dateDernierGacha;
     }
+
+    public void setDateDernierEchange(LocalDateTime dateDernierEchange) {
+        this.dateDernierEchange = dateDernierEchange;
+    }
+
 }

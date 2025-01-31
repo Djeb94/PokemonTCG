@@ -7,6 +7,7 @@ public class Attaque {
     private String nom;
     private Integer degats;
 
+
     public Attaque() {}
 
     public Attaque(String nom, Integer degats) {

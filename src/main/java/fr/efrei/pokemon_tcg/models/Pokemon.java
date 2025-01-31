@@ -28,6 +28,7 @@ public class Pokemon {
 	// Ajout de la variable rareté
 	private Integer rarete;
 
+
 	// Constructeur pour générer la rareté lors de l'instanciation
 	public Pokemon() {
 		this.rarete = genererRarete();
@@ -93,6 +94,7 @@ public class Pokemon {
 	public List<Attaque> getAttaques() { return attaques; }
 
 	public void setAttaques(List<Attaque> attaques) { this.attaques = attaques; }
+
 }
 
 

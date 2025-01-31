@@ -3,9 +3,12 @@ package fr.efrei.pokemon_tcg.services.implementations;
 import fr.efrei.pokemon_tcg.dto.CapturePokemon;
 import fr.efrei.pokemon_tcg.dto.DresseurDTO;
 import fr.efrei.pokemon_tcg.dto.EchangeDTO;
+import fr.efrei.pokemon_tcg.dto.PokemonDeck;
+import fr.efrei.pokemon_tcg.models.Combat;
 import fr.efrei.pokemon_tcg.models.Dresseur;
 import fr.efrei.pokemon_tcg.models.Pokemon;
 import fr.efrei.pokemon_tcg.repositories.DresseurRepository;
+import fr.efrei.pokemon_tcg.services.ICombatService;
 import fr.efrei.pokemon_tcg.services.IDresseurService;
 import fr.efrei.pokemon_tcg.services.IPokemonService;
 import jakarta.transaction.Transactional;
@@ -19,9 +22,12 @@ public class DresseurServiceImpl implements IDresseurService {
 
     private final DresseurRepository repository;
     private final IPokemonService pokemonService;
-    public DresseurServiceImpl(DresseurRepository repository, PokemonServiceImpl pokemonService) {
+    private final ICombatService combatService;
+
+    public DresseurServiceImpl(DresseurRepository repository, PokemonServiceImpl pokemonService, ICombatService combatService) {
         this.repository = repository;
         this.pokemonService = pokemonService;
+        this.combatService = combatService;
     }
 
     @Override
@@ -41,6 +47,21 @@ public class DresseurServiceImpl implements IDresseurService {
         repository.save(dresseur);
     }
 
+    public void creerDeck(String uuid, PokemonDeck transferePokemon) {
+        Dresseur dresseur = findById(uuid);
+        Pokemon pokemon = pokemonService.findById(transferePokemon.getUuid());
+        dresseur.getDeckCombat().add(pokemon);
+        dresseur.getDeckGlobal().remove(pokemon);
+        repository.save(dresseur);
+    }
+
+    public void creerCombat(String uuid, String combatUuid) {
+        Dresseur dresseur = findById(uuid);
+        Combat combat = combatService.findById(combatUuid);
+        dresseur.getCombatEnCours().add(combat);
+        repository.save(dresseur);
+    }
+
     @Override
     public void create(DresseurDTO dresseurDTO) {
         Dresseur dresseur = new Dresseur();
@@ -48,6 +69,7 @@ public class DresseurServiceImpl implements IDresseurService {
         dresseur.setPrenom(dresseurDTO.getPrenom());
         dresseur.setDeletedAt(null);
         dresseur.setDateDernierGacha(null);
+        dresseur.setDateDernierEchange(null);
 
         repository.save(dresseur);
     }
@@ -66,7 +88,7 @@ public class DresseurServiceImpl implements IDresseurService {
         dresseurAModifier.setPrenom(dresseurDTO.getPrenom());
 
         // Mettre à jour la date du dernier gacha (ici, tu peux la mettre à la date actuelle)
-        dresseurAModifier.setDateDernierGacha(LocalDateTime.now());
+
 
         // Sauvegarder le dresseur modifié dans la base de données
         repository.save(dresseurAModifier);
@@ -105,8 +127,8 @@ public class DresseurServiceImpl implements IDresseurService {
         dresseur1.getDeckGlobal().remove(pokemon1);
         dresseur2.getDeckGlobal().remove(pokemon2);
 
-        dresseur1.getDeckGlobal().add(pokemon2);
-        dresseur2.getDeckGlobal().add(pokemon1);
+        dresseur1.getDeckCombat().add(pokemon2);
+        dresseur2.getDeckCombat().add(pokemon1);
 
         // Sauvegarder les modifications
         repository.save(dresseur1);

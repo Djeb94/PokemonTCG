@@ -20,12 +20,18 @@ public class Dresseur {
 
     private LocalDateTime dateDernierGacha;
 
+    private LocalDateTime dateDernierEchange;
+
+
 
     @ManyToMany
     private List<Pokemon> deckCombat;
 
     @ManyToMany
     private List<Pokemon> deckGlobal;
+
+    @ManyToMany
+    private List<Combat> combatEnCours;
 
     public String getUuid() {
         return uuid;
@@ -84,5 +90,20 @@ public class Dresseur {
         this.dateDernierGacha = dateDernierGacha;
     }
 
+    public LocalDateTime getDateDernierEchange() {
+        return dateDernierEchange;
+    }
 
+    public void setDateDernierEchange(LocalDateTime dateDernierEchange) {
+        this.dateDernierEchange = dateDernierEchange;
+    }
+
+
+    public List<Combat> getCombatEnCours() {
+        return combatEnCours;
+    }
+
+    public void setCombatEnCours(List<Combat> combatEnCours) {
+        this.combatEnCours = combatEnCours;
+    }
 }
